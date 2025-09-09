@@ -30,5 +30,4 @@ COPY . .
 # Expone el puerto que usará la aplicación
 EXPOSE 10000
 
-# Comando para ejecutar la aplicación cuando se inicie el contenedor
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "$PORT"]
+CMD uvicorn main:app --host 0.0.0.0 --port $PORT
