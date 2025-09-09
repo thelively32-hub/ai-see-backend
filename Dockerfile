@@ -11,7 +11,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     libimage-exiftool-perl \
-    libgl1-mesa-glx \
+    libgl1-mesa-dev \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
