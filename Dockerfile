@@ -1,11 +1,14 @@
-# Usa una imagen oficial de Python como base
+# ===== Base =====
 FROM python:3.11-slim
 
-# Establece el directorio de trabajo dentro del contenedor
+# Config básica
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Instala las dependencias del sistema operativo y herramientas de compilación
-RUN apt-get update && apt-get install -y \
+# ===== SO deps útiles (ffmpeg para pydub, libgl para OpenCV, etc.) =====
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libimage-exiftool-perl \
     libgl1 \
@@ -17,23 +20,26 @@ RUN apt-get update && apt-get install -y \
     libportaudio2 \
     libportaudiocpp0 \
     portaudio19-dev \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+    ca-certificates \
+    curl \
+  && rm -rf /var/lib/apt/lists/*
 
-# Copia el archivo de requerimientos
+# ===== Python deps (cache-friendly) =====
 COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+ && pip install --no-cache-dir -r requirements.txt
 
-# Instala las librerías de Python
-RUN pip install --no-cache-dir -r requirements.txt
+# ===== Playwright con dependencias de SO =====
+# (así no tienes que listar a mano todas las libs del navegador)
+RUN python -m playwright install --with-deps chromium
 
-# Instala los navegadores de Playwright
-RUN playwright install
-
-# Copia el resto del código de tu aplicación
+# ===== Código =====
 COPY . .
 
-# Expone el puerto que usará la aplicación
+# Render asigna $PORT; usa 10000 por defecto local
 EXPOSE 10000
 
-# Comando para ejecutar la aplicación
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000
+# ===== Start =====
+# Usa $PORT de Render si existe; si no, 10000 para local
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-10000}"]
+
