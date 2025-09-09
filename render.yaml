@@ -1,16 +1,15 @@
 services:
   - type: web
     name: ai-see-analyzer
-    env: python
+    env: docker
     plan: free
-    buildCommand: |
-      python -m pip install --upgrade pip setuptools wheel
-      pip install -r requirements.txt
-      python -m playwright install --with-deps chromium
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.9
+    autoDeploy: true
+    healthCheckPath: /healthz
+    # Si quieres variables adicionales, decláralas aquí:
+    # envVars:
+    #   - key: SOME_API_KEY
+    #     sync: false
+
 
 
 
