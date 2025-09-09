@@ -3,14 +3,16 @@ FROM python:3.11-slim
 
 # Config básica
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PLAYWRIGHT_BROWSERS_PATH=0
 
 WORKDIR /app
 
-# ===== SO deps útiles (ffmpeg para pydub, libgl para OpenCV, etc.) =====
+# ===== SO deps necesarias =====
+# ffmpeg: pydub | libgl/libglib: opencv | ca-certificates/curl: playwright con --with-deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
-    libimage-exiftool-perl \
     libgl1 \
     libglib2.0-0 \
     build-essential \
@@ -26,20 +28,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # ===== Python deps (cache-friendly) =====
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip \
- && pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --upgrade pip \
+ && pip install -r requirements.txt
 
-# ===== Playwright con dependencias de SO =====
-# (así no tienes que listar a mano todas las libs del navegador)
+# ===== Playwright con dependencias de sistema =====
 RUN python -m playwright install --with-deps chromium
 
-# ===== Código =====
+# ===== Código de la app =====
 COPY . .
 
-# Render asigna $PORT; usa 10000 por defecto local
+# ===== Puerto =====
 EXPOSE 10000
 
 # ===== Start =====
 # Usa $PORT de Render si existe; si no, 10000 para local
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-10000}"]
+
 
