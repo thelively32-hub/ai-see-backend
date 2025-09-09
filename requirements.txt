@@ -1,15 +1,23 @@
 fastapi>=0.110
 uvicorn[standard]>=0.30
+
+# Resolución de links y navegador
 yt-dlp>=2024.08.06
 playwright>=1.46
+
+# Procesamiento multimedia
 opencv-python-headless>=4.10.0.84
 numpy>=1.26
 pydub>=0.25.1
+imageio-ffmpeg>=0.4.9
 SpeechRecognition>=3.10.4
+
+# IO async y utilidades
 aiohttp>=3.9
 aiofiles>=23.2
 pydantic>=2.5
-imageio-ffmpeg>=0.4.9
+python-multipart>=0.0.9
+
 
 
 
