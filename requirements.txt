@@ -1,7 +1,7 @@
 fastapi>=0.110
 uvicorn[standard]>=0.30
 
-# Resolución de links y navegador
+# Resolución de links / navegador
 yt-dlp>=2024.08.06
 playwright>=1.46
 
@@ -17,6 +17,8 @@ aiohttp>=3.9
 aiofiles>=23.2
 pydantic>=2.5
 python-multipart>=0.0.9
+
+
 
 
 
